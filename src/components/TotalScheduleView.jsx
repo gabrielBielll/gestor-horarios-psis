@@ -14,11 +14,11 @@ const TotalScheduleView = ({ schedules }) => {
     const totalSchedule = useMemo(() => {
         const aggregated = {};
         DIAS_SEMANA.forEach(dia => { aggregated[dia.key] = {}; HORAS_TRABALHO.forEach(hora => { aggregated[dia.key][hora] = []; }); });
-        schedules.forEach(psi => { DIAS_SEMANA.forEach(dia => { if (psi.horarios_disponiveis && psi.horarios_disponiveis[dia.key]) { psi.horarios_disponiveis[dia.key].forEach(hora => { if (aggregated[dia.key][hora]) aggregated[dia.key][hora].push(psi.psicologa_id); }); } }); });
+        schedules.forEach(psi => { DIAS_SEMANA.forEach(dia => { if (psi.horarios_disponiveis && psi.horarios_disponiveis[dia.key]) { psi.horarios_disponiveis[dia.key].forEach(hora => { if (aggregated[dia.key][hora]) aggregated[dia.key][hora].push({ id: psi.psicologa_id, nome: psi.nome }); }); } }); });
         return aggregated;
     }, [schedules]);
 
-    return (<div className="total-schedule-grid">{DIAS_SEMANA.map(dia => (<div key={dia.key} className="total-day-column"><h3 className="total-day-title">{dia.label}</h3>{HORAS_TRABALHO.map(hora => (<div key={hora} className="total-time-slot"><strong>{hora}</strong><div className="available-psis-list">{totalSchedule[dia.key][hora].length > 0 ? ( totalSchedule[dia.key][hora].map(psiId => ( <span key={psiId} className="psi-badge">ID: {psiId}</span> )) ) : ( <span className="no-psis">Indisponível</span> )}</div></div>))}</div>))}</div>);
+    return (<div className="total-schedule-grid">{DIAS_SEMANA.map(dia => (<div key={dia.key} className="total-day-column"><h3 className="total-day-title">{dia.label}</h3>{HORAS_TRABALHO.map(hora => (<div key={hora} className="total-time-slot"><strong>{hora}</strong><div className="available-psis-list">{totalSchedule[dia.key][hora].length > 0 ? ( totalSchedule[dia.key][hora].map(psi => ( <span key={psi.id} className="psi-badge">{psi.nome}</span> )) ) : ( <span className="no-psis">Indisponível</span> )}</div></div>))}</div>))}</div>);
 };
 
 export default TotalScheduleView;
