@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Calendar, Clock, User, Edit, EyeOff, Plus, Save, UserPlus, Users, LayoutDashboard, ChevronsRight, X, CheckCircle, Send, Wrench } from 'lucide-react';
+import { Calendar, Clock, User, Edit, Eye, EyeOff, Plus, Save, UserPlus, Users, LayoutDashboard, ChevronsRight, X, CheckCircle, Send, Wrench } from 'lucide-react';
 
 import GlobalLoader from './components/GlobalLoader';
 import NotificationToast from './components/NotificationToast';
@@ -192,7 +192,9 @@ function App() {
                             <div className="schedule-card-header">
                               <div className="schedule-card-title"><User size={20} /> <strong>{psi.nome}</strong> (ID: {psi.psicologa_id})</div>
                               <div className="schedule-actions">
-                                <button onClick={() => toggleScheduleExpansion(psi.psicologa_id)} className="btn btn-ghost btn-small btn-icon" title={expandedSchedules.includes(psi.psicologa_id) ? 'Recolher' : 'Ver Horários'}><EyeOff size={16} /></button>
+                                <button onClick={() => toggleScheduleExpansion(psi.psicologa_id)} className="btn btn-ghost btn-small btn-icon" title={expandedSchedules.includes(psi.psicologa_id) ? 'Recolher' : 'Ver Horários'}>
+                                  {expandedSchedules.includes(psi.psicologa_id) ? <Eye size={16} /> : <EyeOff size={16} />}
+                                </button>
                                 <button onClick={() => handleLoadForEdit(psi)} className="btn btn-secondary btn-small"><Edit size={16} /> Editar</button>
                               </div>
                             </div>
