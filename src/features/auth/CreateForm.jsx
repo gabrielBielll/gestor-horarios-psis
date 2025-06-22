@@ -1,49 +1,40 @@
 import React from 'react';
-import { UserPlus, Save, X } from 'lucide-react';
+import { UserPlus, Plus, X } from 'lucide-react';
 
 const CreateForm = ({ handleCreateSubmit, createId, setCreateId, createPassword, setCreatePassword, onClose }) => (
     <div className="section-card" style={{margin: 0, width: '500px', maxWidth: '90vw'}}>
-        <div className="section-header">
-            <UserPlus size={24} />
-            <h2 className="section-title">Novo ID e Senha</h2>
-        </div>
+        <div className="section-header"><UserPlus size={24} /><h2 className="section-title">Criar Nova Psicóloga</h2></div>
         <div className="section-content">
             <form onSubmit={handleCreateSubmit}>
-                <div className="form-grid">
+                <div className="form-grid" style={{gridTemplateColumns: '1fr'}}>
                     <div className="form-group">
-                        <label htmlFor="createId" className="form-label">ID do Psicólogo</label>
+                        <label className="form-label" htmlFor="new-psi-id">ID da Psicóloga:</label>
                         <input
-                            type="text"
-                            id="createId"
-                            className="form-input"
+                            type="number"
+                            id="new-psi-id"
                             value={createId}
                             onChange={(e) => setCreateId(e.target.value)}
-                            placeholder="Ex: Dra. Ana"
                             required
+                            className="form-input"
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="createPassword" className="form-label">Senha Temporária</label>
+                        <label className="form-label" htmlFor="new-psi-password">Senha Inicial:</label>
                         <input
                             type="password"
-                            id="createPassword"
-                            className="form-input"
+                            id="new-psi-password"
                             value={createPassword}
                             onChange={(e) => setCreatePassword(e.target.value)}
-                            placeholder="********"
                             required
+                            className="form-input"
                         />
                     </div>
                 </div>
-                <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
-                    <button type="submit" className="btn btn-primary">
-                        <Save size={20} />
-                        Salvar ID e Senha
-                    </button>
-                    <button type="button" className="btn btn-ghost" onClick={onClose}>
-                        <X size={20} />
-                        Cancelar
-                    </button>
+                <div style={{textAlign: 'center', marginTop: '2rem'}}>
+                    <div style={{display: 'flex', gap: '0.75rem', justifyContent: 'center'}}>
+                        <button type="button" onClick={onClose} className="btn btn-ghost" style={{width: 'auto'}}><X size={18}/> Cancelar</button>
+                        <button type="submit" className="btn btn-tertiary" style={{width: 'auto'}}><Plus size={18}/> Criar</button>
+                    </div>
                 </div>
             </form>
         </div>

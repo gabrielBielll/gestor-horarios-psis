@@ -1,47 +1,63 @@
 import React from 'react';
-import { Calendar, Clock, User, Edit, Eye, EyeOff } from 'lucide-react';
+import { Calendar, User, Edit, Eye, EyeOff } from 'lucide-react';
 import { DIAS_SEMANA } from '../../utils/constants';
 
-const ScheduleList = ({ horariosPsicologos, toggleCardExpansion, expandedCard, openEditModal }) => {
-    if (!horariosPsicologos || horariosPsicologos.length === 0) {
+const ScheduleList = ({ schedules, toggleScheduleExpansion, expandedSchedules, handleLoadForEdit, isLoading, apiError }) => {
+    if (isLoading) {
+        return (
+            <div className="loading-container">
+                <div className="spinner"></div>
+                <p>A carregar...</p>
+            </div>
+        );
+    }
+
+    if (apiError) {
+        return (
+            <div className="message-alert message-error">
+                <span>⚠️</span>{apiError}
+            </div>
+        );
+    }
+
+    if (!schedules || schedules.length === 0) {
         return (
             <div className="empty-state">
                 <Calendar className="empty-state-icon" size={50} />
-                <p>Nenhum horário de psicólogo cadastrado.</p>
+                <p>Nenhuma psicóloga encontrada.</p>
             </div>
         );
     }
 
     return (
         <div className="schedule-grid">
-            {horariosPsicologos.map(psicologo => (
-                <div key={psicologo.id} className="schedule-card">
+            {schedules.map(psi => (
+                <div key={psi.psicologa_id} className="schedule-card">
                     <div className="schedule-card-header">
-                        <h3 className="schedule-card-title">
-                            <User size={20} />
-                            {psicologo.nome || psicologo.id}
-                        </h3>
+                        <div className="schedule-card-title">
+                            <User size={20} /> Psicóloga ID: {psi.psicologa_id}
+                        </div>
                         <div className="schedule-actions">
-                            <button onClick={() => openEditModal(psicologo)} className="btn btn-icon btn-small btn-ghost">
-                                <Edit size={20} />
+                            <button onClick={() => toggleScheduleExpansion(psi.psicologa_id)} className="btn btn-ghost btn-small btn-icon" title={expandedSchedules.includes(psi.psicologa_id) ? 'Recolher' : 'Ver Horários'}>
+                                {expandedSchedules.includes(psi.psicologa_id) ? <EyeOff size={16} /> : <Eye size={16} />}
                             </button>
-                            <button onClick={() => toggleCardExpansion(psicologo.id)} className="btn btn-icon btn-small btn-ghost">
-                                {expandedCard === psicologo.id ? <EyeOff size={20} /> : <Eye size={20} />}
+                            <button onClick={() => handleLoadForEdit(psi)} className="btn btn-secondary btn-small">
+                                <Edit size={16} /> Editar
                             </button>
                         </div>
                     </div>
-                    <div className={`schedule-card-content ${expandedCard === psicologo.id ? 'expanded' : ''}`}>
+                    <div className={`schedule-card-content ${expandedSchedules.includes(psi.psicologa_id) ? 'expanded' : ''}`}>
                         <div className="schedule-display">
                             {DIAS_SEMANA.map(dia => (
                                 <div key={dia.key} className="day-schedule">
-                                    <p className="day-name">{dia.label}</p>
+                                    <div className="day-name">{dia.label}</div>
                                     <div className="time-slots">
-                                        {psicologo.horarios[dia.key] && psicologo.horarios[dia.key].length > 0 ? (
-                                            psicologo.horarios[dia.key].map(hora => (
-                                                <span key={hora} className="time-slot">{hora}</span>
+                                        {psi.horarios_disponiveis && psi.horarios_disponiveis[dia.key]?.length > 0 ? (
+                                            psi.horarios_disponiveis[dia.key].map(hora => (
+                                                <div key={hora} className="time-slot">{hora}</div>
                                             ))
                                         ) : (
-                                            <span className="no-psis">N/A</span>
+                                            <div className="time-slot" style={{opacity: 0.5, fontStyle: 'italic'}}>Indisponível</div>
                                         )}
                                     </div>
                                 </div>

@@ -7,165 +7,105 @@ import CreateForm from './features/auth/CreateForm';
 import EditForm from './features/schedules/EditForm';
 import ScheduleList from './features/schedules/ScheduleList';
 import TotalScheduleView from './features/schedules/TotalScheduleView';
+import DevToolsView from './features/DevToolsView';
 import useScheduleManagement from './hooks/useScheduleManagement';
+import { ChevronsRight } from 'lucide-react';
 
 function App() {
-    const [activeSection, setActiveSection] = useState('horarios');
-    const {
-        horariosPsicologos,
-        expandedCard,
-        loading,
-        globalLoading,
-        notification,
-        showCreateModal,
-        setShowCreateModal,
-        showEditModal,
-        setShowEditModal,
-        createId,
-        setCreateId,
-        createPassword,
-        setCreatePassword,
-        editId,
-        setEditId,
-        editPassword,
-        setEditPassword,
-        horariosSelecionados,
-        setHorariosSelecionados,
-        toggleCardExpansion,
-        showNotification,
-        closeNotification,
-        handleCreateSubmit,
-        handleEditSubmit,
-        handleHorarioChange,
-        openEditModal,
-    } = useScheduleManagement();
+  const [activeView, setActiveView] = useState('dashboard');
 
-    return (
-        <>
-            <GlobalStyles />
-            <div className="dashboard-layout">
-                <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} />
+  const {
+    schedules,
+    isLoading,
+    apiError,
+    expandedSchedules,
+    isCreateFormVisible,
+    setIsCreateFormVisible,
+    isEditFormVisible,
+    setIsEditFormVisible,
+    isSaving,
+    notification,
+    setNotification,
+    editId,
+    setEditId,
+    editPassword,
+    setEditPassword,
+    horariosSelecionados,
+    setHorariosSelecionados,
+    createId,
+    setCreateId,
+    createPassword,
+    setCreatePassword,
+    fetchSchedules,
+    toggleScheduleExpansion,
+    handleHorarioChange,
+    handleLoadForEdit,
+    handleEditSubmit,
+    handleCreateSubmit,
+    handleSendCustomRequest,
+    closeModal,
+  } = useScheduleManagement();
 
-                <div className="app-container">
-                    <header className="app-header">
-                        <h1 className="app-title">Painel de Agendamentos</h1>
-                    </header>
+  return (
+    <>
+      <GlobalStyles />
+      {isSaving && <GlobalLoader />}
+      {notification.show && <NotificationToast message={notification.message} type={notification.type} onClose={() => setNotification({ show: false, message: '', type: ''})} />}
 
-                    <main className="main-content">
-                        {activeSection === 'horarios' && (
-                            <section className="section-card">
-                                <div className="section-header">
-                                    <h2 className="section-title">Meus Horários</h2>
-                                </div>
-                                <div className="section-content">
-                                    {loading ? (
-                                        <div className="loading-container">
-                                            <div className="spinner"></div>
-                                            <p>Carregando horários...</p>
-                                        </div>
-                                    ) : (
-                                        <ScheduleList
-                                            horariosPsicologos={horariosPsicologos}
-                                            toggleCardExpansion={toggleCardExpansion}
-                                            expandedCard={expandedCard}
-                                            openEditModal={openEditModal}
-                                        />
-                                    )}
-                                </div>
-                            </section>
-                        )}
-
-                        {activeSection === 'total' && (
-                            <section className="section-card">
-                                <div className="section-header">
-                                    <h2 className="section-title">Todos os Horários Disponíveis</h2>
-                                </div>
-                                <div className="section-content">
-                                    {loading ? (
-                                        <div className="loading-container">
-                                            <div className="spinner"></div>
-                                            <p>Carregando horários...</p>
-                                        </div>
-                                    ) : (
-                                        <TotalScheduleView horariosPsicologos={horariosPsicologos} />
-                                    )}
-                                </div>
-                            </section>
-                        )}
-
-                        {activeSection === 'criar' && (
-                            <section className="section-card">
-                                <div className="section-header">
-                                    <h2 className="section-title">Criar Novo Psicólogo</h2>
-                                </div>
-                                <div className="section-content">
-                                    <CreateForm
-                                        handleCreateSubmit={handleCreateSubmit}
-                                        createId={createId}
-                                        setCreateId={setCreateId}
-                                        createPassword={createPassword}
-                                        setCreatePassword={setCreatePassword}
-                                        onClose={() => setShowCreateModal(false)}
-                                    />
-                                </div>
-                            </section>
-                        )}
-
-                        {activeSection === 'dev-tools' && (
-                            <section className="section-card">
-                                <div className="section-header">
-                                    <h2 className="section-title">Ferramentas de Desenvolvimento</h2>
-                                </div>
-                                <div className="section-content">
-                                    <p>Aqui você pode adicionar ferramentas para desenvolvedores, como visualizadores de JSON, simuladores de API, etc.</p>
-                                    {/* Exemplo de visualizador JSON */}
-                                    <h3 style={{marginTop: '2rem', marginBottom: '1rem', color: 'var(--charcoal)'}}>Dados dos Psicólogos (JSON)</h3>
-                                    <pre className="json-viewer">{JSON.stringify(horariosPsicologos, null, 2)}</pre>
-                                </div>
-                            </section>
-                        )}
-                    </main>
-                </div>
+      {(isCreateFormVisible || isEditFormVisible) && !isSaving && (
+        <div className="modal-overlay" onClick={closeModal}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+                {isCreateFormVisible && <CreateForm {...{ handleCreateSubmit, createId, setCreateId, createPassword, setCreatePassword, onClose: () => setIsCreateFormVisible(false) }}/>}
+                {isEditFormVisible && <EditForm show={isEditFormVisible} {...{ handleEditSubmit, editId, editPassword, setEditPassword, horariosSelecionados, handleHorarioChange, onClose: () => setIsEditFormVisible(false) }} />}
             </div>
+        </div>
+      )}
 
-            {globalLoading && <GlobalLoader message="Processando..." />}
-            {notification && (
-                <NotificationToast
-                    message={notification.message}
-                    type={notification.type}
-                    onClose={closeNotification}
-                />
-            )}
+      <div className="dashboard-layout">
+        <aside className="sidebar">
+            <div className="sidebar-header"><h1 className="sidebar-title">Gestão Psi</h1></div>
+            
+            <h3 className="sidebar-section-title"><ChevronsRight size={16} />Menu</h3>
+            <nav className="nav-menu">
+                <div onClick={() => setActiveView('dashboard')} className={`nav-link ${activeView === 'dashboard' ? 'active' : ''}`}><LayoutDashboard size={20} /> Painel Individual</div>
+                <div onClick={() => setActiveView('totalGrid')} className={`nav-link ${activeView === 'totalGrid' ? 'active' : ''}`}><Users size={20} /> Grade Geral</div>
+                <div onClick={() => setActiveView('devtools')} className={`nav-link ${activeView === 'devtools' ? 'active' : ''}`}><Wrench size={20} /> Ferramentas</div>
+            </nav>
+            
+            <h3 className="sidebar-section-title"><ChevronsRight size={16}/>Ações</h3>
+            <nav className="nav-menu">
+                <div onClick={() => setIsCreateFormVisible(true)} className={`nav-link`}><UserPlus size={20} /> Criar Psicóloga</div>
+            </nav>
+        </aside>
 
-            {showCreateModal && (
-                <div className="modal-overlay">
-                    <CreateForm
-                        handleCreateSubmit={handleCreateSubmit}
-                        createId={createId}
-                        setCreateId={setCreateId}
-                        createPassword={createPassword}
-                        setCreatePassword={setCreatePassword}
-                        onClose={() => setShowCreateModal(false)}
+        <main className="app-container">
+          <div className="main-content">
+            <header className="app-header">
+                <h1 className="app-title">Gestão de Horários das Psicólogas</h1>
+            </header>
+
+            {activeView === 'dashboard' && (
+              <section className="section-card">
+                <div className="section-header"><Calendar size={24} /> <h2 className="section-title">Perfis Individuais</h2></div>
+                <div className="section-content">
+                    <ScheduleList
+                        schedules={schedules}
+                        isLoading={isLoading}
+                        apiError={apiError}
+                        expandedSchedules={expandedSchedules}
+                        toggleScheduleExpansion={toggleScheduleExpansion}
+                        handleLoadForEdit={handleLoadForEdit}
                     />
                 </div>
+              </section>
             )}
-
-            {showEditModal && (
-                <div className="modal-overlay">
-                    <EditForm
-                        show={showEditModal}
-                        handleEditSubmit={handleEditSubmit}
-                        editId={editId}
-                        editPassword={editPassword}
-                        setEditPassword={setEditPassword}
-                        horariosSelecionados={horariosSelecionados}
-                        handleHorarioChange={handleHorarioChange}
-                        onClose={() => setShowEditModal(false)}
-                    />
-                </div>
-            )}
-        </>
-    );
+            {activeView === 'totalGrid' && <TotalScheduleView schedules={schedules} />}
+            {activeView === 'devtools' && <DevToolsView schedules={schedules} onSendRequest={handleSendCustomRequest} fetchSchedules={fetchSchedules}/>}
+          </div>
+        </main>
+      </div>
+    </>
+  );
 }
 
 export default App;
