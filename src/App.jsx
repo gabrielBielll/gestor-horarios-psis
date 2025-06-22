@@ -3,7 +3,6 @@ import { Calendar, Clock, User, Edit, Eye, EyeOff, Plus, Save, UserPlus, Users, 
 
 import GlobalLoader from './components/GlobalLoader';
 import NotificationToast from './components/NotificationToast';
-import userEyeIcon from './assets/user-eye.svg'; // Importar o SVG
 import CreateForm from './components/CreateForm';
 import EditForm from './components/EditForm';
 import TotalScheduleView from './components/TotalScheduleView';
@@ -175,8 +174,7 @@ function App() {
         <main className="app-container">
           <div className="main-content">
             <header className="app-header">
-                <img src={userEyeIcon} alt="Visão Individual Icon" style={{ marginRight: '10px', height: '24px' }} />
-                <h1 className="app-title">gestor horarios</h1>
+                <h1 className="app-title">Gestão de Horários das Psicólogas</h1>
             </header>
 
             {activeView === 'dashboard' && (
