@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, User, LayoutDashboard, UserPlus, Wrench } from 'lucide-react';
+import { Calendar, User, LayoutDashboard, UserPlus, Wrench, Users } from 'lucide-react';
 
 const Sidebar = ({ activeSection, setActiveSection }) => {
     return (
