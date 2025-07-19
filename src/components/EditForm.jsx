@@ -2,13 +2,15 @@ import React from 'react';
 import { Edit, Save, X, Clock } from 'lucide-react';
 
 const DIAS_SEMANA = [
-  { key: 'seg', label: 'Segunda' }, { key: 'ter', label: 'Terça' },
-  { key: 'qua', label: 'Quarta' }, { key: 'qui', label: 'Quinta' },
-  { key: 'sex', label: 'Sexta' }, { key: 'sab', label: 'Sábado' },
+  { key: 'dom', label: 'Domingo' }, { key: 'seg', label: 'Segunda' },
+  { key: 'ter', label: 'Terça' }, { key: 'qua', label: 'Quarta' },
+  { key: 'qui', label: 'Quinta' }, { key: 'sex', label: 'Sexta' },
+  { key: 'sab', label: 'Sábado' },
 ];
 const HORAS_TRABALHO = [
-  '08:00', '09:00', '10:00', '11:00', '12:00', '13:00',
-  '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'
+  '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
+  '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00',
+  '21:00', '22:00', '23:00'
 ];
 
 const EditForm = ({ show, handleEditSubmit, editId, editPassword, setEditPassword, horariosSelecionados, handleHorarioChange, onClose }) => {
